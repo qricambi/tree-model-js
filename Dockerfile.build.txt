@@ -1,0 +1,5 @@
+from node:10-stretch-slim
+WORKDIR /app
+Copy . /app/
+
+run apt update -y  && apt install git  -y && npm install && npm test
