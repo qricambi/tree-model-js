@@ -51,6 +51,8 @@ module.exports = (function () {
       for (i = 0, childCount = model[this.config.childrenPropertyName(node)].length; i < childCount; i++) {
         addChildToNode(node, this.parse(model[this.config.childrenPropertyName(node)][i]));
       }
+    } else if (model[this.config.childrenPropertyName(node)]){
+      addChildToNode(node, this.parse(model[this.config.childrenPropertyName(node)]));
     }
     return node;
   };
