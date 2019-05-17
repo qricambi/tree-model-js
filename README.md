@@ -44,7 +44,7 @@ var tree = new TreeModel(options)
 
 Valid properties for the options object are:
 
-* `childrenPropertyName` - A function that returns a string with the name of the children property. Default is function(node){return `children`};
+* `childrenPropertyName` - A function that returns a string with the name of the children property. Default is `function(node){return children};`
 * `modelComparatorFn` - A comparator function to sort the children when parsing the model and adding children. The default order policy is to keep the parsed order and append new children. The comparator function receives the model for two nodes just like the [Array.sort](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort) function. The provided sort algorithm is **stable**.
 
 ### Parse the hierarchy object
