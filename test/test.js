@@ -198,7 +198,7 @@ describe('TreeModel', function () {
         for (i = 0; i < root.children.length; i++) {
           child.setIndex(i);
           assert.equal(child.getIndex(), i);
-          assert.equal(root.model[child.config.childrenPropertyName].indexOf(child.model), i);
+          assert.equal(root.model[child.config.childrenPropertyName(root)].indexOf(child.model), i);
         }
       });
 
@@ -549,7 +549,7 @@ describe('TreeModel', function () {
 
     beforeEach(function () {
       treeModel = new TreeModel({
-        childrenPropertyName: 'deps',
+        childrenPropertyName: function(){return 'deps';},
         modelComparatorFn: function (a, b) {
           return b.id - a.id;
         }

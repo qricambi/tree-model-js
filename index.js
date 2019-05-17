@@ -18,7 +18,7 @@ module.exports = (function () {
   function TreeModel(config) {
     config = config || {};
     this.config = config;
-    this.config.childrenPropertyName = config.childrenPropertyName || 'children';
+    this.config.childrenPropertyName = config.childrenPropertyName || function(){return 'children';};
     this.config.modelComparatorFn = config.modelComparatorFn;
   }
 
@@ -42,14 +42,14 @@ module.exports = (function () {
     }
 
     node = new Node(this.config, model);
-    if (model[this.config.childrenPropertyName] instanceof Array) {
+    if (model[this.config.childrenPropertyName(node)] instanceof Array) {
       if (this.config.modelComparatorFn) {
-        model[this.config.childrenPropertyName] = mergeSort(
+        model[this.config.childrenPropertyName(node)] = mergeSort(
           this.config.modelComparatorFn,
-          model[this.config.childrenPropertyName]);
+          model[this.config.childrenPropertyName(node)]);
       }
-      for (i = 0, childCount = model[this.config.childrenPropertyName].length; i < childCount; i++) {
-        addChildToNode(node, this.parse(model[this.config.childrenPropertyName][i]));
+      for (i = 0, childCount = model[this.config.childrenPropertyName(node)].length; i < childCount; i++) {
+        addChildToNode(node, this.parse(model[this.config.childrenPropertyName(node)][i]));
       }
     }
     return node;
@@ -75,31 +75,31 @@ module.exports = (function () {
     }
 
     child.parent = self;
-    if (!(self.model[self.config.childrenPropertyName] instanceof Array)) {
-      self.model[self.config.childrenPropertyName] = [];
+    if (!(self.model[self.config.childrenPropertyName(child.parent)] instanceof Array)) {
+      self.model[self.config.childrenPropertyName(child.parent)] = [];
     }
 
     if (hasComparatorFunction(self)) {
       // Find the index to insert the child
       index = findInsertIndex(
         self.config.modelComparatorFn,
-        self.model[self.config.childrenPropertyName],
+        self.model[self.config.childrenPropertyName(child.parent)],
         child.model);
 
       // Add to the model children
-      self.model[self.config.childrenPropertyName].splice(index, 0, child.model);
+      self.model[self.config.childrenPropertyName(child.parent)].splice(index, 0, child.model);
 
       // Add to the node children
       self.children.splice(index, 0, child);
     } else {
       if (insertIndex === undefined) {
-        self.model[self.config.childrenPropertyName].push(child.model);
+        self.model[self.config.childrenPropertyName(child.parent)].push(child.model);
         self.children.push(child);
       } else {
         if (insertIndex < 0 || insertIndex > self.children.length) {
           throw new Error('Invalid index.');
         }
-        self.model[self.config.childrenPropertyName].splice(insertIndex, 0, child.model);
+        self.model[self.config.childrenPropertyName(child.parent)].splice(insertIndex, 0, child.model);
         self.children.splice(insertIndex, 0, child);
       }
     }
@@ -138,8 +138,8 @@ module.exports = (function () {
 
     this.parent.children.splice(index, 0, this.parent.children.splice(oldIndex, 1)[0]);
 
-    this.parent.model[this.parent.config.childrenPropertyName]
-      .splice(index, 0, this.parent.model[this.parent.config.childrenPropertyName].splice(oldIndex, 1)[0]);
+    this.parent.model[this.parent.config.childrenPropertyName(this.parent)]
+      .splice(index, 0, this.parent.model[this.parent.config.childrenPropertyName(this.parent)].splice(oldIndex, 1)[0]);
 
     return this;
   };
@@ -280,7 +280,7 @@ module.exports = (function () {
     if (!this.isRoot()) {
       indexOfChild = this.parent.children.indexOf(this);
       this.parent.children.splice(indexOfChild, 1);
-      this.parent.model[this.config.childrenPropertyName].splice(indexOfChild, 1);
+      this.parent.model[this.config.childrenPropertyName(this.parent)].splice(indexOfChild, 1);
       this.parent = undefined;
       delete this.parent;
     }

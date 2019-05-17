@@ -42,7 +42,7 @@ declare namespace TreeModel {
         /**
          * The name for the children array property. Default is "children".
          */
-        childrenPropertyName?: string;
+        childrenPropertyName?: GetChildrenFunction<any>;
         modelComparatorFn?: ComparatorFunction;
         [propName: string]: any;
     }
@@ -53,6 +53,7 @@ declare namespace TreeModel {
 
     type StrategyName = "pre" | "post" | "breadth";
 
+    type GetChildrenFunction<T> = (node: Node<T>) => string;
     type ComparatorFunction = (left: any, right: any) => boolean;
     type NodeVisitorFunction<T> = (visitingNode: Node<T>) => boolean;
 
